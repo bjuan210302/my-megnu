@@ -1,23 +1,36 @@
 import { Badge, Button, Card, Group, Image, Text, Title } from "@mantine/core";
+import { Plate } from "../model/model";
 
-export function PlateCard(props: any) {
+type PlateCardProps = {
+  plate: Plate;
+}
+
+export function PlateCard(props: PlateCardProps) {
+  const { plate } = props;
   return (
-    <Card shadow="sm" p="lg" radius="md" withBorder py={9} px={11} >
+    <Card shadow="sm" p="lg" radius="md" withBorder py={9} px={11}>
       <Image radius='md'
-        src="https://cdn.colombia.com/gastronomia/2014/01/27/postre-de-gelatina-y-crema-de-leche-3430.jpg"
+        src={plate.img}
         height={121}
+        width='100%'
         mb={11}
+        sx={{
+          border: '1px solid rgba(0, 0, 0, 0.1)',
+          borderRadius: '8px',
+        }}
       />
 
-      <Title weight={700} size={22} mb={6}>Vasito</Title>
+      <Title weight={700} size={22} mb={6}>
+        {plate.name}
+      </Title>
 
       <Text size="sm" color="dimmed" mb={11}>
-        Akams ansn jsjadnzn askdj wk kanz nalnaln lancmcn nan mcnsjdn nsnmz nasjsndjnjk an ajnsndj ayzyty
+        {plate.desc}
       </Text>
 
       <Group position="right" mt="md" >
         <Badge color="gray" variant="light" size="xl" px={20}>
-          $20.00
+          ${plate.price}
         </Badge>
       </Group>
     </Card>

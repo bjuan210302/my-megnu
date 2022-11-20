@@ -1,81 +1,73 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
   AppShell,
   Navbar,
   Header,
-  Text,
   MediaQuery,
   Burger,
   useMantineTheme,
   Title,
-  Input,
-  SimpleGrid,
-  Image,
-  Stack,
 } from '@mantine/core';
-import { IconSearch } from '@tabler/icons';
-import { PlateCard } from './PlateCard';
 
-export function MenuAppShell(props: any) {
+type ManuAppShellProps = {
+  categoryTitle: string;
+  categoryNames: string[];
+  children: React.ReactNode
+}
+export function MenuAppShell(props: ManuAppShellProps) {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
+  const { categoryTitle, children, categoryNames } = props;
   return (
     <AppShell
       padding={0}
       styles={{
+        root: {
+          display: 'flex',
+          width: '100%'
+        },
+        body: {
+          width: '100%'
+        },
         main: {
+          display: 'flex',
+          flexDirection: 'column',
+          width: '100%',
           background: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.contentBackground[0],
         },
       }}
-      navbarOffsetBreakpoint="sm"
-      asideOffsetBreakpoint="sm"
+      navbarOffsetBreakpoint="md"
       header={
         <Header
           height={{ base: 50, md: 75 }} p="md"
           position={{ right: 0, left: 'var(--mantine-navbar-width, 0px)' as unknown as number }}>
-          <MenuHeader opened={opened} setOpened={setOpened} />
+          <MenuHeader opened={opened} setOpened={setOpened} categoryTitle={categoryTitle} />
         </Header>
       }
       navbar={
-        <Navbar p="md" hiddenBreakpoint="sm" hidden={!opened} width={{ sm: 200, lg: 330 }}
+        <Navbar p="md" hiddenBreakpoint="md" hidden={!opened} width={{ sm: 0, md: 250, lg: 250, xl: 300 }}
           position={{ top: '0' as unknown as number }} height='100vh'>
-          <ManuNavbar opened={opened} />
+          <ManuNavbar opened={opened} categoryNames={categoryNames} />
         </Navbar>
       }
     >
-      <Image src="https://cdn.colombia.com/gastronomia/2011/09/14/postre-de-deditos-de-mama-3361.jpg"
-        height={230}
-      />
-      <Stack px={50} pt={30} sx={{ gap: 50 }} align='center'>
-        <Input
-          rightSection={<IconSearch />}
-          variant="filled"
-          placeholder="Search"
-          w='45%'
-        />
-        <SimpleGrid cols={3} sx={{ gap: 50 }}>
-          <PlateCard />
-          <PlateCard />
-          <PlateCard />
-        </SimpleGrid>
-      </Stack>
+      {children}
     </AppShell>
   );
 }
 
-function ManuNavbar(props: { opened: boolean }) {
-  const { opened } = props;
-  return (
-    <Title>nav</Title>
-  )
-}
+type HeaderProps = {
+  opened: boolean;
+  setOpened: Function;
+  categoryTitle: string;
+};
 
-function MenuHeader(props: { opened: boolean, setOpened: Function }) {
+function MenuHeader(props: HeaderProps) {
   const theme = useMantineTheme();
-  const { opened, setOpened } = props;
+  const { opened, setOpened, categoryTitle } = props;
   return (
     <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
-      <MediaQuery largerThan="sm" styles={{ display: 'none' }}>
+      <MediaQuery largerThan="md" styles={{ display: 'none' }}>
         <Burger
           opened={opened}
           onClick={() => setOpened((o: boolean) => !o)}
@@ -84,7 +76,22 @@ function MenuHeader(props: { opened: boolean, setOpened: Function }) {
           mr="xl"
         />
       </MediaQuery>
-      <Title>header</Title>
+      <Title>{categoryTitle}</Title>
     </div>
+  )
+}
+
+type MenuNavbarProps = {
+  opened: boolean;
+  categoryNames: string[];
+};
+
+function ManuNavbar(props: MenuNavbarProps) {
+  const { opened, categoryNames } = props;
+  return (
+    <>
+      <Title>Mi Megnú</Title>
+      {categoryNames.map(name => <div>{name}</div>)}
+    </>
   )
 }
