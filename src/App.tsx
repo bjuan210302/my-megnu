@@ -1,10 +1,11 @@
-import { Title, Image, Input, SimpleGrid, Stack } from '@mantine/core'
+import { Title, Image, Input, SimpleGrid, Stack, Button } from '@mantine/core'
 import { MantineThemeOverride, MantineProvider } from '@mantine/styles'
 import { IconSearch } from '@tabler/icons'
-import { PlateCard } from './components/PlateCard'
+import { EmptyCard, PlateCard } from './components/PlateCard'
 import { useState } from 'react'
 import { MenuAppShell } from './components/MenuAppShell'
 import { testCategories, Category, Plate, categoryNames } from './model/model'
+import { NewCategoryModal, NewPlateModal } from './components/Modals'
 
 const theme: MantineThemeOverride = {
   headings: {
@@ -42,10 +43,12 @@ function App() {
     setPlatesShowing(testCategories[categoryName].plates)
   }
   const [platesShowing, setPlatesShowing] = useState<Plate[]>(selectedCategory.plates);
+  const [isPlateModalOpen, setIsPlateModalOpen] = useState(false)
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false)
   return (
     <MantineProvider theme={theme} withGlobalStyles withNormalizeCSS>
       <MenuAppShell categoryTitle={selectedCategory.name} categoryNames={categoryNames}
-        setSelectedCategory={_setSelectedCategory}>
+        setSelectedCategory={_setSelectedCategory} setIsCategoryModalOpen={setIsCategoryModalOpen}>
         <Image src={selectedCategory.bannerImg} height={230} />
         <Stack px='4%' py={30} sx={{ gap: 50 }} align='center'>
           <Input
@@ -61,7 +64,10 @@ function App() {
               { minWidth: 1300, cols: 3 },
             ]}>
             {platesShowing.map(plate => <PlateCard plate={plate} />)}
+            <EmptyCard onClick={() => setIsPlateModalOpen(true)}/>
           </SimpleGrid>
+          <NewPlateModal isOpen={isPlateModalOpen} setOpened={setIsPlateModalOpen} />
+          <NewCategoryModal isOpen={isCategoryModalOpen} setOpened={setIsCategoryModalOpen} />
         </Stack>
       </MenuAppShell>
     </MantineProvider>
