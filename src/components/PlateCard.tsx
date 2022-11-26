@@ -20,7 +20,7 @@ export function PlateCard(props: PlateCardProps) {
         }}
       />
 
-      <Title weight={700} size={22} mb={6}>
+      <Title order={3} weight={700} size={22} mb={6}>
         {plate.name}
       </Title>
 

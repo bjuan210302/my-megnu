@@ -21,6 +21,14 @@ const theme: MantineThemeOverride = {
       styles: (theme) => ({
         root: {
           color: theme.colorScheme === 'light' ? '#585858' : 'red',
+          '&:is(h1)': {
+            fontFamily: 'Roboto Slab, serif',
+            color: theme.colorScheme === 'light' ? 'black' : 'red',
+            textAlign: 'center',
+          },
+          '&:is(h2)': {
+            fontSize: 34,
+          }
         },
       })
     },
@@ -28,13 +36,18 @@ const theme: MantineThemeOverride = {
 }
 
 function App() {
-  const [selectedCategory, setSelectedCategory] = useState<Category>(testCategories['Postre']);
+  const [selectedCategory, setSelectedCategory] = useState<Category>(testCategories['Postres']);
+  const _setSelectedCategory = (categoryName: string) => {
+    setSelectedCategory(testCategories[categoryName])
+    setPlatesShowing(testCategories[categoryName].plates)
+  }
   const [platesShowing, setPlatesShowing] = useState<Plate[]>(selectedCategory.plates);
   return (
     <MantineProvider theme={theme} withGlobalStyles withNormalizeCSS>
-      <MenuAppShell categoryTitle={selectedCategory.name} categoryNames={categoryNames}>
+      <MenuAppShell categoryTitle={selectedCategory.name} categoryNames={categoryNames}
+        setSelectedCategory={_setSelectedCategory}>
         <Image src={selectedCategory.bannerImg} height={230} />
-        <Stack px='4%' pt={30} sx={{ gap: 50 }} align='center'>
+        <Stack px='4%' py={30} sx={{ gap: 50 }} align='center'>
           <Input
             rightSection={<IconSearch />}
             variant="filled"
@@ -42,11 +55,11 @@ function App() {
             w='45%'
           />
           <SimpleGrid cols={3} sx={{ gap: 50 }}
-           breakpoints={[
-            { minWidth: 500, cols: 1 },
-            { minWidth: 700, cols: 2 },
-            { minWidth: 1300, cols: 3 },
-          ]}>
+            breakpoints={[
+              { minWidth: 500, cols: 1 },
+              { minWidth: 700, cols: 2 },
+              { minWidth: 1300, cols: 3 },
+            ]}>
             {platesShowing.map(plate => <PlateCard plate={plate} />)}
           </SimpleGrid>
         </Stack>

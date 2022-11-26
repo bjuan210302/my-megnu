@@ -7,17 +7,21 @@ import {
   Burger,
   useMantineTheme,
   Title,
+  Image,
+  Stack,
+  SegmentedControl
 } from '@mantine/core';
 
 type ManuAppShellProps = {
   categoryTitle: string;
   categoryNames: string[];
-  children: React.ReactNode
+  setSelectedCategory: Function;
+  children: React.ReactNode;
 }
 export function MenuAppShell(props: ManuAppShellProps) {
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
-  const { categoryTitle, children, categoryNames } = props;
+  const { categoryTitle, children, categoryNames, setSelectedCategory } = props;
   return (
     <AppShell
       padding={0}
@@ -40,14 +44,17 @@ export function MenuAppShell(props: ManuAppShellProps) {
       header={
         <Header
           height={{ base: 50, md: 75 }} p="md"
-          position={{ right: 0, left: 'var(--mantine-navbar-width, 0px)' as unknown as number }}>
+          position={{ right: 0, left: 'var(--mantine-navbar-width, 0px)' as unknown as number }}
+          sx={{ borderLeft: '1px solid #e9ecef'}}>
           <MenuHeader opened={opened} setOpened={setOpened} categoryTitle={categoryTitle} />
         </Header>
       }
       navbar={
-        <Navbar p="md" hiddenBreakpoint="md" hidden={!opened} width={{ sm: 0, md: 250, lg: 250, xl: 300 }}
-          position={{ top: '0' as unknown as number }} height='100vh'>
-          <ManuNavbar opened={opened} categoryNames={categoryNames} />
+        <Navbar hiddenBreakpoint="md" hidden={!opened} width={{ sm: 0, md: 250, lg: 250, xl: 300 }}
+          position={{ top: '0' as unknown as number }} height='100vh'
+          sx={{border: 'unset'}}
+          >
+          <ManuNavbar opened={opened} categoryNames={categoryNames} setSelectedCategory={setSelectedCategory} />
         </Navbar>
       }
     >
@@ -76,7 +83,7 @@ function MenuHeader(props: HeaderProps) {
           mr="xl"
         />
       </MediaQuery>
-      <Title>{categoryTitle}</Title>
+      <Title order={2}>{categoryTitle}</Title>
     </div>
   )
 }
@@ -84,14 +91,47 @@ function MenuHeader(props: HeaderProps) {
 type MenuNavbarProps = {
   opened: boolean;
   categoryNames: string[];
+  setSelectedCategory: Function;
 };
 
 function ManuNavbar(props: MenuNavbarProps) {
-  const { opened, categoryNames } = props;
+  const theme = useMantineTheme();
+  const { opened, categoryNames, setSelectedCategory } = props;
   return (
     <>
-      <Title>Mi Megnú</Title>
-      {categoryNames.map(name => <div>{name}</div>)}
+      <Stack align='center' mt='var(--mantine-header-height)' py={28}>
+        <Image src='/megnu-logo.svg' width={100}></Image>
+        <Title order={1}>Mi Megnú</Title>
+      </Stack>
+      <SegmentedControl orientation="vertical" data={categoryNames} w='100%' mt={21}
+      onChange={value => {console.log(value);setSelectedCategory(value)}}
+        styles={{
+          root: {
+            backgroundColor: 'unset',
+            padding: 0,
+            borderRadius: 0,
+          },
+          control: {
+            paddingLeft: 40,
+          },
+          label: {
+            fontSize: 23,
+            fontWeight: 600,
+            padding: '8px 15px',
+            letterSpacing: '0.05em',
+            textAlign: 'left',
+            borderRadius: '10px 0 0 10px'
+          },
+          active: {
+            boxShadow: 'unset',
+          },
+          labelActive: {
+            border: 'unset',
+            backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.contentBackground[0],
+          }
+        }}
+      />
     </>
   )
 }
+
