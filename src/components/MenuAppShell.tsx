@@ -10,20 +10,27 @@ import {
   Image,
   Stack,
   SegmentedControl,
-  Text
+  Text,
+  Group,
+  Switch,
+  useMantineColorScheme
 } from '@mantine/core';
+import { UserDropdown } from './UserDropdown'
+import { IconMoonStars, IconSun } from '@tabler/icons';
 
 type ManuAppShellProps = {
   categoryTitle: string;
   categoryNames: string[];
   setSelectedCategory: Function;
-  setIsCategoryModalOpen: Function; 
+  setIsCategoryModalOpen: Function;
   children: React.ReactNode;
 }
 export function MenuAppShell(props: ManuAppShellProps) {
   const theme = useMantineTheme();
-  const [opened, setOpened] = useState(false);
+  const { colorScheme } = useMantineColorScheme();
+  const [navbarOpened, setNavbarOpened] = useState(true);
   const { categoryTitle, children, categoryNames, setSelectedCategory, setIsCategoryModalOpen } = props;
+  const dark = colorScheme === 'dark';
   return (
     <AppShell
       padding={0}
@@ -39,25 +46,34 @@ export function MenuAppShell(props: ManuAppShellProps) {
           display: 'flex',
           flexDirection: 'column',
           width: '100%',
-          background: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.contentBackground[0],
+          background: dark ? theme.colors.dark[8] : theme.colors.contentBackground[0],
         },
       }}
       navbarOffsetBreakpoint="md"
       header={
         <Header
           height={{ base: 50, md: 75 }} p="md"
-          position={{ right: 0, left: 'var(--mantine-navbar-width, 0px)' as unknown as number }}
-          sx={{ borderLeft: '1px solid #e9ecef' }}>
-          <MenuHeader opened={opened} setOpened={setOpened} categoryTitle={categoryTitle} />
+          position={{
+            right: 0,
+            left: 'var(--mantine-navbar-width, 0px)' as unknown as number,
+          }}
+          sx={{
+            borderLeft: '1px solid #e9ecef',
+            borderColor: dark ? theme.colors.dark[5] : '#e9ecef',
+          }}>
+          <MenuHeader opened={navbarOpened} setOpened={setNavbarOpened} categoryTitle={categoryTitle} />
         </Header>
       }
       navbar={
-        <Navbar hiddenBreakpoint="md" hidden={!opened} width={{ sm: 0, md: 250, lg: 250, xl: 300 }}
+        <Navbar hiddenBreakpoint="md" hidden={!navbarOpened} width={{
+          sm: navbarOpened ? 250 : 0,
+          md: 250, lg: 250, xl: 300
+        }}
           position={{ top: '0' as unknown as number }} height='100vh'
           sx={{ border: 'unset' }}
         >
-          <ManuNavbar opened={opened} categoryNames={categoryNames}
-            setSelectedCategory={setSelectedCategory} setIsCategoryModalOpen={setIsCategoryModalOpen}/>
+          <ManuNavbar categoryNames={categoryNames}
+            setSelectedCategory={setSelectedCategory} setIsCategoryModalOpen={setIsCategoryModalOpen} />
         </Navbar>
       }
     >
@@ -75,6 +91,8 @@ type HeaderProps = {
 function MenuHeader(props: HeaderProps) {
   const theme = useMantineTheme();
   const { opened, setOpened, categoryTitle } = props;
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const dark = colorScheme === 'dark';
   return (
     <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
       <MediaQuery largerThan="md" styles={{ display: 'none' }}>
@@ -87,12 +105,21 @@ function MenuHeader(props: HeaderProps) {
         />
       </MediaQuery>
       <Title order={2}>{categoryTitle}</Title>
+      <Group position='right' w='100%'>
+        <Switch sx={{ display: 'flex' }}
+          size="lg"
+          color={dark ? 'gray' : 'dark'}
+          onLabel={<IconSun size={16} stroke={2.5} color={theme.colors.yellow[4]} />}
+          offLabel={<IconMoonStars size={16} stroke={2.5} color={theme.colors.blue[6]} />}
+          onChange={() => toggleColorScheme()}
+        />
+        <UserDropdown />
+      </Group>
     </div>
   )
 }
 
 type MenuNavbarProps = {
-  opened: boolean;
   categoryNames: string[];
   setSelectedCategory: Function;
   setIsCategoryModalOpen: Function;
@@ -100,7 +127,9 @@ type MenuNavbarProps = {
 
 function ManuNavbar(props: MenuNavbarProps) {
   const theme = useMantineTheme();
-  const { opened, categoryNames, setSelectedCategory, setIsCategoryModalOpen } = props;
+  const { categoryNames, setSelectedCategory, setIsCategoryModalOpen } = props;
+  const { colorScheme } = useMantineColorScheme();
+  const dark = colorScheme === 'dark';
   return (
     <>
       <Stack align='center' mt='var(--mantine-header-height)' py={28}>
@@ -128,10 +157,11 @@ function ManuNavbar(props: MenuNavbarProps) {
             },
             active: {
               boxShadow: 'unset',
+              backgroundColor: 'unset'
             },
             labelActive: {
               border: 'unset',
-              backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.contentBackground[0],
+              backgroundColor: dark ? theme.colors.dark[8] : theme.colors.contentBackground[0],
             }
           }}
         />
@@ -142,11 +172,11 @@ function ManuNavbar(props: MenuNavbarProps) {
             fontStyle: 'italic',
             padding: '8px 15px',
             letterSpacing: '0.05em',
-            color: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.dark[0],
+            color: dark ? theme.colors.dark[3] : theme.colors.dark[0],
             cursor: 'pointer'
           }}
           onClick={() => setIsCategoryModalOpen(true)}
-          >Nueva categoría...</Text>
+        >Nueva categoría...</Text>
       </Stack>
     </>
   )
