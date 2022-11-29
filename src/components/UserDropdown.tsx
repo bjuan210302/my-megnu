@@ -5,9 +5,12 @@ import {
   IconUserCircle,
   IconChevronDown
 } from '@tabler/icons';
+import { Admin } from 'model/model';
+import { useContext } from 'react';
+import { AdminContext } from '../App';
 
-export function UserDropdown(props: { setAdmin(x: any): void }) {
-  const { setAdmin } = props;
+export function UserDropdown() {
+  const { setAdmin } = useContext(AdminContext);
   const { colorScheme } = useMantineColorScheme();
   const dark = colorScheme === 'dark';
 
@@ -39,9 +42,9 @@ export function UserDropdown(props: { setAdmin(x: any): void }) {
 
         <Menu.Divider mt={25} />
         <Menu.Item icon={<IconSettings size={14} />}>Mi Perfil</Menu.Item>
-        <Menu.Item color="red" icon={<IconTransferOut size={14}
-          onClick={() => setAdmin({})} />}>Cerrar Sesión</Menu.Item>
+        <Menu.Item color="red" icon={<IconTransferOut size={14} />}
+          onClick={() => { setAdmin({} as Admin) }}>Cerrar Sesión</Menu.Item>
       </Menu.Dropdown>
-    </Menu>
+    </Menu >
   );
 }

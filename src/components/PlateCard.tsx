@@ -18,7 +18,7 @@ export function PlateCard(props: PlateCardProps) {
         }}
         onClick={() => setIsPlateModalOpen(true)}>
         <Image radius='md'
-          src={plate.img}
+          src={plate.dishImg}
           height={121}
           width='100%'
           mb={11}

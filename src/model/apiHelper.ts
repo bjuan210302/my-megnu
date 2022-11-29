@@ -1,5 +1,5 @@
 import axios from "axios";
-import { LoginBody, LoginResponse, Admin, POSTCategoryBody, POSTCategoryResponse, DELETECategoryBody, Category } from "./model";
+import { LoginBody, LoginResponse, POSTCategoryBody, POSTCategoryResponse, DELETECategoryBody, Category, GETCategoryResponse, PUTPlate, POSTPlate, Admin } from "./model";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 // USER
@@ -22,22 +22,28 @@ export function deleteUser() {
 }
 
 // CATEGORIES
+export async function getCategory(categoryId: string) {
+  const res = await axios.get<GETCategoryResponse>(`${API_BASE_URL}/menu/category/${categoryId}`);
+  return res.data;
+}
 export async function createCategory(body: POSTCategoryBody) {
   const res = await axios.post<POSTCategoryResponse>(`${API_BASE_URL}/menu/category`, body);
+  console.log('res', res);
   return res.data;
 }
 export async function deleteCategory(body: DELETECategoryBody) {
-  const res = await axios.delete<POSTCategoryResponse>(`${API_BASE_URL}/menu/category`, { data: body});
+  const res = await axios.delete<POSTCategoryResponse>(`${API_BASE_URL}/menu/category`, { data: body });
   return res.data;
 
 }
-
 // PLATES
-export function createPlate(category: Category) {
-
+export async function createPlate(body: POSTPlate) {
+  const res = await axios.post<GETCategoryResponse>(`${API_BASE_URL}/menu/category/dish`, body);
+  return res.data;
 }
-export function updatePlate(category: Category) {
-
+export async function updatePlate(body: PUTPlate) {
+  const res = await axios.put<GETCategoryResponse>(`${API_BASE_URL}/menu/category/dish`, body);
+  return res.data;
 }
 export function deletePlate(category: Category) {
 

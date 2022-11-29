@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   AppShell,
   Navbar,
@@ -18,19 +18,19 @@ import {
 import { UserDropdown } from './UserDropdown'
 import { IconMoonStars, IconSun } from '@tabler/icons';
 import { NewCategoryModal } from './Modals';
+import { AdminContext } from '../App';
 
 type ManuAppShellProps = {
   categoryTitle: string;
   categoryNames: string[];
   setSelectedCategory: Function;
-  setAdmin(x: any): void
   children: React.ReactNode;
 }
 export function MenuAppShell(props: ManuAppShellProps) {
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
   const [navbarOpened, setNavbarOpened] = useState(true);
-  const { categoryTitle, children, categoryNames, setSelectedCategory, setAdmin } = props;
+  const { categoryTitle, children, categoryNames, setSelectedCategory } = props;
   const dark = colorScheme === 'dark';
   return (
     <AppShell
@@ -62,7 +62,7 @@ export function MenuAppShell(props: ManuAppShellProps) {
             borderLeft: '1px solid #e9ecef',
             borderColor: dark ? theme.colors.dark[5] : '#e9ecef',
           }}>
-          <MenuHeader opened={navbarOpened} setOpened={setNavbarOpened} categoryTitle={categoryTitle} setAdmin={setAdmin} />
+          <MenuHeader opened={navbarOpened} setOpened={setNavbarOpened} categoryTitle={categoryTitle} />
         </Header>
       }
       navbar={
@@ -86,12 +86,11 @@ type HeaderProps = {
   opened: boolean;
   setOpened: Function;
   categoryTitle: string;
-  setAdmin(x: any): void;
 };
 
 function MenuHeader(props: HeaderProps) {
   const theme = useMantineTheme();
-  const { opened, setOpened, categoryTitle, setAdmin } = props;
+  const { opened, setOpened, categoryTitle } = props;
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const dark = colorScheme === 'dark';
   return (
@@ -110,7 +109,7 @@ function MenuHeader(props: HeaderProps) {
           offLabel={<IconMoonStars size={16} stroke={2.5} color={theme.colors.blue[6]} />}
           onChange={() => toggleColorScheme()}
         />
-        <UserDropdown setAdmin={setAdmin} />
+        <UserDropdown />
       </Group>
     </div>
   )

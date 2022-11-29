@@ -1,16 +1,13 @@
 import { Group, Header, Stack, Image, Button, Box, TextInput } from "@mantine/core"
 import { Admin } from "../model/model"
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { loginUser, registerUser } from "../model/apiHelper"
 import { showNotification } from '@mantine/notifications';
 import { IconEdit, IconLogin } from "@tabler/icons";
+import { AdminContext } from "../App";
 
-type Props = {
-  setAdmin(x: Admin): any;
-}
-
-const Login = (props: Props) => {
-  const { setAdmin } = props;
+const Login = () => {
+  const { setAdmin } = useContext(AdminContext);
   const [formIsLogin, setFormIsLogin] = useState(true);
   const [userInfo, setUserInfo] = useState<Omit<Admin, '_id' | 'menu'>>({
     name: "busta",
@@ -19,8 +16,8 @@ const Login = (props: Props) => {
     restaurantName: "Chuzos de yumbo",
     nit: "1234",
     restaurantType: "Restaurant",
-    email: "busta2@hotmail.com",
-    password: "",
+    email: "gavo24@hotmail.com",
+    password: "prueba",
   })
 
   const registerOrLogin = async () => {
