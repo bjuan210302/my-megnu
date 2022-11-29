@@ -17,19 +17,20 @@ import {
 } from '@mantine/core';
 import { UserDropdown } from './UserDropdown'
 import { IconMoonStars, IconSun } from '@tabler/icons';
+import { NewCategoryModal } from './Modals';
 
 type ManuAppShellProps = {
   categoryTitle: string;
   categoryNames: string[];
   setSelectedCategory: Function;
-  setIsCategoryModalOpen: Function;
+  setAdmin(x: any): void
   children: React.ReactNode;
 }
 export function MenuAppShell(props: ManuAppShellProps) {
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
   const [navbarOpened, setNavbarOpened] = useState(true);
-  const { categoryTitle, children, categoryNames, setSelectedCategory, setIsCategoryModalOpen } = props;
+  const { categoryTitle, children, categoryNames, setSelectedCategory, setAdmin } = props;
   const dark = colorScheme === 'dark';
   return (
     <AppShell
@@ -61,7 +62,7 @@ export function MenuAppShell(props: ManuAppShellProps) {
             borderLeft: '1px solid #e9ecef',
             borderColor: dark ? theme.colors.dark[5] : '#e9ecef',
           }}>
-          <MenuHeader opened={navbarOpened} setOpened={setNavbarOpened} categoryTitle={categoryTitle} />
+          <MenuHeader opened={navbarOpened} setOpened={setNavbarOpened} categoryTitle={categoryTitle} setAdmin={setAdmin} />
         </Header>
       }
       navbar={
@@ -72,8 +73,7 @@ export function MenuAppShell(props: ManuAppShellProps) {
           position={{ top: '0' as unknown as number }} height='100vh'
           sx={{ border: 'unset' }}
         >
-          <ManuNavbar categoryNames={categoryNames}
-            setSelectedCategory={setSelectedCategory} setIsCategoryModalOpen={setIsCategoryModalOpen} />
+          <ManuNavbar categoryNames={categoryNames} setSelectedCategory={setSelectedCategory} />
         </Navbar>
       }
     >
@@ -86,34 +86,31 @@ type HeaderProps = {
   opened: boolean;
   setOpened: Function;
   categoryTitle: string;
+  setAdmin(x: any): void;
 };
 
 function MenuHeader(props: HeaderProps) {
   const theme = useMantineTheme();
-  const { opened, setOpened, categoryTitle } = props;
+  const { opened, setOpened, categoryTitle, setAdmin } = props;
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const dark = colorScheme === 'dark';
   return (
     <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
       <MediaQuery largerThan="md" styles={{ display: 'none' }}>
-        <Burger
-          opened={opened}
+        <Burger opened={opened} size="sm" mr="xl" color={theme.colors.gray[6]}
           onClick={() => setOpened((o: boolean) => !o)}
-          size="sm"
-          color={theme.colors.gray[6]}
-          mr="xl"
         />
       </MediaQuery>
       <Title order={2}>{categoryTitle}</Title>
       <Group position='right' w='100%'>
-        <Switch sx={{ display: 'flex' }}
-          size="lg"
+        <Switch size="lg"
+          sx={{ display: 'flex' }}
           color={dark ? 'gray' : 'dark'}
           onLabel={<IconSun size={16} stroke={2.5} color={theme.colors.yellow[4]} />}
           offLabel={<IconMoonStars size={16} stroke={2.5} color={theme.colors.blue[6]} />}
           onChange={() => toggleColorScheme()}
         />
-        <UserDropdown />
+        <UserDropdown setAdmin={setAdmin} />
       </Group>
     </div>
   )
@@ -122,13 +119,13 @@ function MenuHeader(props: HeaderProps) {
 type MenuNavbarProps = {
   categoryNames: string[];
   setSelectedCategory: Function;
-  setIsCategoryModalOpen: Function;
 };
 
 function ManuNavbar(props: MenuNavbarProps) {
   const theme = useMantineTheme();
-  const { categoryNames, setSelectedCategory, setIsCategoryModalOpen } = props;
   const { colorScheme } = useMantineColorScheme();
+  const { categoryNames, setSelectedCategory } = props;
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const dark = colorScheme === 'dark';
   return (
     <>
@@ -178,6 +175,7 @@ function ManuNavbar(props: MenuNavbarProps) {
           onClick={() => setIsCategoryModalOpen(true)}
         >Nueva categoría...</Text>
       </Stack>
+      <NewCategoryModal isOpen={isCategoryModalOpen} setOpened={setIsCategoryModalOpen} />
     </>
   )
 }

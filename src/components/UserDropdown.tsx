@@ -6,7 +6,8 @@ import {
   IconChevronDown
 } from '@tabler/icons';
 
-export function UserDropdown() {
+export function UserDropdown(props: { setAdmin(x: any): void }) {
+  const { setAdmin } = props;
   const { colorScheme } = useMantineColorScheme();
   const dark = colorScheme === 'dark';
 
@@ -36,9 +37,10 @@ export function UserDropdown() {
           <Text size={13} weight={600}>correo.electronico@gmail.com</Text>
         </Stack>
 
-        <Menu.Divider mt={25}/>
+        <Menu.Divider mt={25} />
         <Menu.Item icon={<IconSettings size={14} />}>Mi Perfil</Menu.Item>
-        <Menu.Item color="red" icon={<IconTransferOut size={14} />}>Cerrar Sesión</Menu.Item>
+        <Menu.Item color="red" icon={<IconTransferOut size={14}
+          onClick={() => setAdmin({})} />}>Cerrar Sesión</Menu.Item>
       </Menu.Dropdown>
     </Menu>
   );

@@ -2,10 +2,12 @@ import { Image, Input, SimpleGrid, Stack, ColorSchemeProvider, ColorScheme } fro
 import { MantineThemeOverride, MantineProvider } from '@mantine/styles'
 import { IconSearch } from '@tabler/icons'
 import { EmptyCard, PlateCard } from './components/PlateCard'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { MenuAppShell } from './components/MenuAppShell'
-import { testCategories, Category, Plate, categoryNames } from './model/model'
-import { NewCategoryModal, NewPlateModal } from './components/Modals'
+import { testCategories, Category, Plate, categoryNames, Admin } from './model/model'
+import { Route, Routes, useNavigate } from 'react-router-dom'
+import Login from './components/Login'
+import { NotificationsProvider } from '@mantine/notifications'
 
 const theme: MantineThemeOverride = {
   headings: {
@@ -35,50 +37,63 @@ const theme: MantineThemeOverride = {
 }
 
 function App() {
+  const navigate = useNavigate();
+  const [admin, setAdmin] = useState({} as Admin);
+  const [colorScheme, setColorScheme] = useState<ColorScheme>('light');
+  const toggleDarkMode = (value?: ColorScheme) => setColorScheme(colorScheme === 'dark' ? 'light' : 'dark');
+
   const [selectedCategory, setSelectedCategory] = useState<Category>(testCategories['Postres']);
   const _setSelectedCategory = (categoryName: string) => {
     setSelectedCategory(testCategories[categoryName])
     setPlatesShowing(testCategories[categoryName].plates)
   }
   const [platesShowing, setPlatesShowing] = useState<Plate[]>(selectedCategory.plates);
-  const [isPlateModalOpen, setIsPlateModalOpen] = useState(false)
-  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false)
-  const [colorScheme, setColorScheme] = useState<ColorScheme>('light');
-  const toggleDarkMode = (value?: ColorScheme) => {
-    setColorScheme(colorScheme === 'dark' ? 'light' : 'dark');
-  }
 
   const filterPlates = (newVal: any) => {
     newVal = newVal.target.value.toLowerCase()
     setPlatesShowing(selectedCategory.plates.filter(plate => plate.name.toLowerCase().includes(newVal)))
   }
+
+  useEffect(() => {
+    if (admin._id)
+      navigate('/application')
+    else
+      navigate('/')
+  }, [admin])
+  
   return (
     <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleDarkMode}>
       <MantineProvider theme={{ ...theme, colorScheme }} withGlobalStyles withNormalizeCSS>
-        <MenuAppShell categoryTitle={selectedCategory.name} categoryNames={categoryNames}
-          setSelectedCategory={_setSelectedCategory} setIsCategoryModalOpen={setIsCategoryModalOpen}>
-          <Image src={selectedCategory.bannerImg} height={230} />
-          <Stack px='4%' py={30} sx={{ gap: 50 }} align='center'>
-            <Input
-              rightSection={<IconSearch />}
-              variant="filled"
-              placeholder="Search"
-              w='45%'
-              onChange={filterPlates}
-            />
-            <SimpleGrid cols={3} sx={{ gap: 50 }}
-              breakpoints={[
-                { minWidth: 500, cols: 1 },
-                { minWidth: 700, cols: 2 },
-                { minWidth: 1300, cols: 3 },
-              ]}>
-              {platesShowing.map(plate => <PlateCard plate={plate} />)}
-              <EmptyCard onClick={() => setIsPlateModalOpen(true)} />
-            </SimpleGrid>
-            <NewPlateModal isOpen={isPlateModalOpen} setOpened={setIsPlateModalOpen} />
-            <NewCategoryModal isOpen={isCategoryModalOpen} setOpened={setIsCategoryModalOpen} />
-          </Stack>
-        </MenuAppShell>
+        <NotificationsProvider position='top-center'>
+
+          <Routes>
+
+            <Route path='/' element={<Login setAdmin={setAdmin} />} />
+
+            <Route path='/application' element={
+              <MenuAppShell categoryTitle={selectedCategory.name} categoryNames={categoryNames}
+                setSelectedCategory={_setSelectedCategory} setAdmin={setAdmin}>
+                <Image src={selectedCategory.bannerImg} height={230} />
+                <Stack px='4%' py={30} sx={{ gap: 50 }} align='center'>
+                  <Input variant="filled" placeholder="Search" w='45%'
+                    rightSection={<IconSearch />}
+                    onChange={filterPlates}
+                  />
+                  <SimpleGrid cols={3} sx={{ gap: 50 }}
+                    breakpoints={[
+                      { minWidth: 500, cols: 1 },
+                      { minWidth: 700, cols: 2 },
+                      { minWidth: 1300, cols: 3 },
+                    ]}>
+                    {platesShowing.map(plate => <PlateCard plate={plate} />)}
+                    <EmptyCard />
+                  </SimpleGrid>
+                </Stack>
+              </MenuAppShell>} />
+
+          </Routes>
+
+        </NotificationsProvider>
       </MantineProvider>
     </ColorSchemeProvider>
   )

@@ -1,3 +1,18 @@
+export type Admin = {
+  _id: string,
+  name: string,
+  lastName: string,
+  contactNumber: number,
+  restaurantName: string,
+  restaurantType: string,
+  nit: string,
+  email: string,
+  password: string,
+  menu: string[]
+  categoryNames?: string[],
+  categories?: Record<string, Category>,
+}
+
 export type Category = {
   name: string;
   bannerImg: string;
@@ -11,6 +26,44 @@ export type Plate = {
   img: string;
 }
 
+
+// API
+export type LoginBody = {
+  email: string,
+  password: string,
+}
+
+export type LoginResponse = {
+  user: Admin,
+  token: string,
+}
+
+// CATEGORY
+export type POSTCategoryBody = {
+  restaurantAdminId: string,
+  category: {
+    name: string,
+    bannerImg: string,
+  }
+}
+export type POSTCategoryResponse = {
+  categories: string[],
+  _id: string,
+}
+export type GETCategoryBody = {
+  categoryId: string,
+}
+export type GETCategoryResponse = {
+  _id: string,
+  name: string,
+  bannerImg: string,
+  dishes: string[],
+}
+export type DELETECategoryBody = {
+  restaurantAdminId: string,
+  categoryId: string,
+}
+
 export const testCategories: Record<string, Category> = {
   'Postres': {
     name: 'Postres',
@@ -18,7 +71,9 @@ export const testCategories: Record<string, Category> = {
     plates: [
       {
         name: 'Vasito',
-        desc: 'Akams ansn jsjadnzn askdj wk kanz nalnaln lancmcn nan mcnsjdn nsnmz nasjsndjnjk an ajnsndj ayzyty',
+        desc: 'Akams ansn jsjadnzn askdj wk kanz nalnaln lancmcn nan mcnsjdn nsnmz nasjsndjnjk an ajnsndj ayzyty'
+          + 'kams ansn jsjadnzn askdj wk kanz nalnaln lancmdljaskldjaskldjakls jaskdj klasjdkajsdkl jaskdjaskljklajs'
+          + 'kams ansn jsjadnzn askdj wk kanz nalnaln lancmdljaskldjaskldjakls jaskdj klasjdkajsdkl jaskdjaskljklajs',
         price: '20.00',
         img: 'https://cdn.colombia.com/gastronomia/2014/01/27/postre-de-gelatina-y-crema-de-leche-3430.jpg'
       },
@@ -91,7 +146,6 @@ export const testCategories: Record<string, Category> = {
     ]
   }
 }
-
 export const categoryNames = Object.values(testCategories).reduce<string[]>(
   (prev, cate) => [...prev, cate.name], []
 )
